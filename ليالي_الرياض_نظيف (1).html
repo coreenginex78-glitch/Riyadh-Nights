@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ليالي الرياض</title>
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#070912;
+  --navy:#0d1330;
+  --navy2:#141a3d;
+  --plum:#1d1240;
+  --gold:#f2b705;
+  --gold-soft:#ffd873;
+  --teal:#2fe6c9;
+  --pink:#ff4d7e;
+  --ink:#f6f2ea;
+  --muted:#93a0c2;
+  --line:#ffffff17;
+}
+*{box-sizing:border-box;margin:0;font-family:'Tajawal',system-ui,Tahoma,sans-serif}
+body{background:var(--deep);color:var(--ink);height:100vh;overflow:hidden;user-select:none;-webkit-user-select:none}
+h1,.brand{font-family:'Lalezar','Tajawal',Tahoma,sans-serif;font-weight:400}
+
+/* ===== خلفية الليل المشتركة (سماء + أفق الرياض) ===== */
+#home,#join{background:radial-gradient(ellipse at 50% 12%,var(--plum) 0%,var(--navy) 48%,var(--deep) 100%);position:relative;overflow:hidden}
+#home::before,#join::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1.4px 1.4px at 18% 22%,#ffe49a99,transparent),radial-gradient(1.4px 1.4px at 68% 15%,#9ff3e699,transparent),radial-gradient(1px 1px at 38% 32%,#ffffff55,transparent),radial-gradient(1px 1px at 84% 26%,#ffe49a66,transparent),radial-gradient(1.4px 1.4px at 58% 10%,#ffffff55,transparent),radial-gradient(1px 1px at 12% 40%,#9ff3e655,transparent),radial-gradient(1px 1px at 92% 45%,#ffffff44,transparent);opacity:.85;pointer-events:none;animation:tw 6s ease-in-out infinite alternate}
+@keyframes tw{from{opacity:.45}to{opacity:1}}
+.skyline{position:absolute;left:0;right:0;bottom:0;width:100%;height:clamp(90px,24vh,180px);z-index:0;pointer-events:none}
+.skyline .glow{animation:glowPulse 4.5s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+.topBadges{display:flex;flex-direction:column;align-items:center;gap:8px;z-index:1;margin-bottom:4px}
+.badge{font-size:12.5px;font-weight:700;padding:7px 16px;border-radius:999px;letter-spacing:.2px}
+.badge.store{background:#11261f;border:1px solid #2fe6c955;color:var(--teal)}
+.badge.offer{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#2a1900;font-weight:800}
+
+.brand{font-size:44px;letter-spacing:.5px;z-index:1;color:var(--gold-soft);text-shadow:0 2px 28px #f2b70555;line-height:1.15}
+#home .tag,#join .tag{color:var(--muted);z-index:1;font-size:14.5px;letter-spacing:.2px;margin-top:-4px;margin-bottom:4px;font-weight:500}
+
+.devRow{display:flex;gap:16px;z-index:1;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.devCard{position:relative;width:170px;border-radius:20px;padding:24px 16px 20px;cursor:pointer;text-align:center;background:linear-gradient(165deg,#141a3dcc,#0a0e22f2);border:1px solid var(--line);border-top:3px solid var(--accent,var(--gold));box-shadow:0 16px 32px #00000066;transition:transform .16s ease,box-shadow .16s ease}
+.devCard:active{transform:translateY(2px) scale(.97)}
+.devCard.tv{--accent:var(--gold)}
+.devCard.phone{--accent:var(--teal)}
+.devCard .di{font-size:28px;width:58px;height:58px;line-height:58px;border-radius:50%;margin:0 auto 12px;background:#0000;border:2px solid var(--accent,var(--gold));box-shadow:0 0 18px color-mix(in srgb, var(--accent,var(--gold)) 45%, transparent)}
+.devCard b{display:block;font-size:17px;color:var(--ink);margin-bottom:5px;font-weight:800}
+.devCard span{font-size:12px;color:var(--muted);display:block;line-height:1.6}
+
+#hub{background:radial-gradient(ellipse at 50% 10%,var(--plum) 0%,var(--navy) 50%,var(--deep) 100%);position:relative;overflow-y:scroll;overflow-x:hidden;padding-top:28px;padding-bottom:28px;scrollbar-width:thin;scrollbar-color:var(--teal) var(--deep);justify-content:flex-start !important}
+#hub h1{font-size:26px;z-index:1;color:var(--gold-soft);font-weight:400}
+#hub .tag{color:var(--muted);z-index:1;font-size:13.5px;margin-top:-6px;margin-bottom:4px}
+#hub::-webkit-scrollbar{width:12px}
+#hub::-webkit-scrollbar-track{background:var(--deep)}
+#hub::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--teal),#1a9e8c);border-radius:8px;border:3px solid var(--deep)}
+#hub>button.back{position:relative;z-index:1;background:transparent;border:1px solid var(--line);color:var(--muted);margin-top:16px;border-radius:999px;padding:10px 24px;font-weight:700;transition:border-color .15s,color .15s}
+#hub>button.back:active{border-color:var(--gold-soft);color:var(--gold-soft)}
+
+.gcard{transition:transform .15s ease}
+.gcard:active{transform:translateY(2px) scale(.97)}
+
+#join .joinCard{position:relative;z-index:1;background:linear-gradient(165deg,#141a3dcc,#0a0e22f2);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:20px;padding:26px 24px;box-shadow:0 16px 32px #00000066;display:flex;flex-direction:column;align-items:center;gap:10px;width:min(320px,88vw)}
+#join input{background:#0a0f24cc;color:var(--ink);border:1px solid #27305a;border-radius:10px;box-shadow:inset 0 2px 6px #0006;transition:border-color .15s,box-shadow .15s;font-family:'Tajawal',sans-serif}
+#join input:focus{outline:none;border-color:var(--teal);box-shadow:inset 0 2px 6px #0006,0 0 0 3px #2fe6c933}
+#join input::placeholder{color:#7987ad}
+#join .joinCard button{width:100%;position:relative;z-index:1;background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#231600;font-weight:800;box-shadow:0 6px 16px #0008;border:0;border-radius:999px;transition:transform .15s}
+#join .joinCard button:active{transform:scale(.96)}
+#home>button.back,#join>button.back{position:relative;z-index:1;background:transparent;border:1px solid var(--line);color:var(--muted);margin-top:2px;border-radius:999px;font-weight:700}
+
+.s{display:none;position:fixed;inset:0;z-index:2;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:14px;text-align:center}
+button{background:var(--teal);color:#06211c;border:0;border-radius:999px;padding:10px 16px;font-size:15px;font-weight:700;margin:2px;font-family:'Tajawal',sans-serif}
+button.r{background:#e5393d;color:#fff}button.g{background:#2fcf7a;color:#042016}
+input{padding:12px;font-size:18px;border-radius:10px;border:0;width:230px;text-align:center}
+h1{font-size:34px}
+.box{background:#05070fcc;border:1px solid var(--line);border-radius:16px;padding:14px 20px;font-size:15px;line-height:1.6;text-align:center}
+#tvTop{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+#codeBox{font-family:'Tajawal',sans-serif}
+#codeBox>*:first-child{font-size:13px;color:var(--muted);font-weight:600}
+#code{font-family:'Lalezar',sans-serif;font-size:44px;color:var(--gold-soft);font-weight:400;letter-spacing:8px;text-shadow:0 0 18px #f2b70577;display:block;margin-top:4px}
+#mk{margin-top:10px;display:flex;justify-content:center}
+#mk img,#mk canvas{border-radius:10px;background:#fff;padding:6px}
+#ph{background:var(--deep);display:none;align-items:center;justify-content:center}
+#phMsg{font-size:17px;opacity:.9;padding:0 20px}
+
+@media (prefers-reduced-motion:reduce){
+  #home::before,#join::before,.skyline .glow,.brand{animation:none!important}
+}
+</style></head><body>
+
+<div class="s" id="home" style="display:flex">
+<svg class="skyline" viewBox="0 0 400 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0,140 L0,95 L18,95 L18,70 L28,70 L28,95 L40,95 L40,55 L50,55 L50,40 L58,40 L58,95 L72,95 L72,80 L84,80 L84,95 L100,95 L100,30 L106,30 L106,20 L112,20 L112,95 L128,95 L128,60 L140,60 L140,95 L156,95 L156,45 L164,45 L164,10 L170,10 L170,45 L178,45 L178,95 L196,95 L196,65 L208,65 L208,95 L224,95 L224,25 L230,25 L230,15 L236,15 L236,95 L252,95 L252,75 L264,75 L264,95 L280,95 L280,50 L292,50 L292,95 L308,95 L308,35 L314,35 L314,18 L320,18 L320,95 L336,95 L336,70 L348,70 L348,95 L364,95 L364,58 L376,58 L376,95 L400,95 L400,140 Z" fill="#05060e"/>
+  <circle class="glow" cx="112" cy="18" r="2.2" fill="#ffe49a"/>
+  <circle class="glow" cx="170" cy="9" r="1.8" fill="#9ff3e6"/>
+  <circle class="glow" cx="230" cy="14" r="2" fill="#ffe49a"/>
+  <circle class="glow" cx="314" cy="17" r="1.8" fill="#9ff3e6"/>
+</svg>
+<div class="topBadges">
+  <div class="badge store">📲 حمّل من جوجل بلاي: مكتبة ليالي الرياض</div>
+  <div class="badge offer">كل الألعاب مجانية الليلة</div>
+</div>
+<h1 class="brand">ليالي الرياض</h1><p class="tag">اختر جهازك عشان نبدأ اللعب</p>
+<div class="devRow">
+<div class="devCard tv" onclick="show('hub')">
+  <svg class="di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4" stroke-linecap="round"/></svg>
+  <b>تلفزيون</b><span>استضف اللعبة على الشاشة الكبيرة</span>
+</div>
+<div class="devCard phone" onclick="requestFS();show('join')">
+  <svg class="di" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.3h2" stroke-linecap="round"/></svg>
+  <b>جوال</b><span>ادخل برمز الغرفة وتحكم من جوالك</span>
+</div>
+</div>
+</div>
+
+<div class="s" id="hub">
+<h1 style="font-size:28px">ولا لعبة بعد</h1>
+<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:1400px;margin:0 auto">
+<div class="gcard" id="addGamesTile" style="--gc:#7fe08a;border-color:#7fe08a55;background:linear-gradient(165deg,#0a1a0eee,#05050af5);position:relative;z-index:1;width:clamp(150px,22vw,236px);min-width:150px;border-radius:20px;padding:20px 16px 16px;cursor:pointer;text-align:center;border:1px solid #3d7de055;box-shadow:0 14px 30px #00000066,inset 0 1px 0 #ffffff12" onclick="openAddGames()"><div style="font-size:34px;width:64px;height:64px;line-height:64px;border-radius:18px;margin:0 auto 10px;background:radial-gradient(circle at 35% 30%,#ffffff14,#00000033)">➕</div><b style="display:block;font-size:16px;margin-bottom:4px">إضافة ألعاب</b><p style="font-size:12.5px;opacity:.78;line-height:1.5">وصّل تطبيق مكتبة ألعاب ليالي الرياض من جوالك وأضف لعبة جديدة لهذي القائمة</p></div>
+</div>
+<button class="back" onclick="show('home')" style="margin-top:10px">⬅ رجوع</button>
+</div>
+
+<div id="addGamesOverlay" style="display:none;position:fixed;inset:0;background:#05050aee;z-index:998;align-items:center;justify-content:center;flex-direction:column;padding:20px;text-align:center">
+<div style="max-width:560px;background:linear-gradient(165deg,#0f2416,#060c08);border:1px solid #7fe08a55;border-radius:20px;padding:26px">
+<div id="agStep1">
+<h2 style="font-size:24px">➕ إضافة ألعاب جديدة</h2>
+<p style="opacity:.8;margin-top:12px;line-height:1.9">
+حمّل تطبيق «مكتبة ألعاب ليالي الرياض» على جوالك.<br>
+افتحه، اضغط على شريط الاتصال، واكتب الرمز اللي راح يطلع لك بالخطوة الجاية.<br>
+بعدها اختر أي لعبة من مكتبتك واضغط «إضافة» — تنتقل مباشرة لهذا التلفزيون.
+</p>
+<button style="margin-top:18px;background:linear-gradient(180deg,#7fe08a,#2f9e4a)" onclick="agShowCode()">التالي ▶</button>
+<button class="back" onclick="closeAddGames()" style="margin-top:10px">إلغاء</button>
+</div>
+<div id="agStep2" style="display:none">
+<h2 style="font-size:22px">📡 بانتظار الاتصال من جوالك</h2>
+<p id="agCode" style="font-size:40px;font-weight:900;letter-spacing:.08em;color:#9effa8;margin:16px auto;padding:10px 22px;border-radius:16px;background:#ffffff10;display:inline-block">......</p>
+<div id="agMk" style="display:flex;justify-content:center;margin-top:6px"></div>
+<p id="agProgress" style="opacity:.7;margin-top:14px">اكتب هذا الرمز بتطبيق المكتبة بجوالك</p>
+<button class="back" onclick="closeAddGames()" style="margin-top:14px">إلغاء</button>
+</div>
+<div id="agStep3" style="display:none">
+<h2 style="font-size:22px">✅ تمت إضافة اللعبة</h2>
+<div id="agGameIcon" style="font-size:60px;margin:14px 0"></div>
+<p id="agGameName" style="font-size:22px;font-weight:900"></p>
+<button style="margin-top:18px;background:linear-gradient(180deg,#7fe08a,#2f9e4a)" onclick="agShowFinal()">التالي ▶</button>
+</div>
+<div id="agStep4" style="display:none">
+<p style="opacity:.8;margin-bottom:10px">اللعبة جاهزة، وصارت موجودة دايمًا بقائمة الألعاب كمان.</p>
+<button style="background:linear-gradient(180deg,#7fe08a,#2f9e4a)" onclick="agPlayNow()">▶️ لعب الحين</button>
+<button style="margin-top:10px;background:linear-gradient(180deg,#8fa3ff,#4a5fd1)" onclick="closeAddGames()">✖ خروج</button>
+</div>
+</div>
+</div>
+
+<div class="s" id="tv">
+<div id="tvTop"><div class="box" id="codeBox">رمز الغرفة<br><span id="code">...</span><div id="mk"></div></div></div>
+</div>
+
+<div class="s" id="join">
+<h1>📱 دخول اللعبة</h1><p class="tag">اكتب رمز الغرفة اللي طالع عندكم بالتلفزيون</p>
+<div class="joinCard">
+<div style="display:flex;gap:8px;align-items:stretch">
+<input id="jc" placeholder="رمز الغرفة (4 أرقام)" inputmode="numeric" style="flex:1">
+<button id="qrScanBtn" onclick="openQrScan()" style="width:52px;flex:0 0 52px;font-size:22px;padding:0">📷</button>
+</div>
+<input id="jn" placeholder="اسمك">
+<button onclick="joinGame()">▶ دخول</button>
+<p id="jm"></p>
+</div>
+<button class="back" onclick="show('home')">⬅ رجوع</button>
+</div>
+
+<div id="qrScanOverlay" style="display:none;position:fixed;inset:0;background:#000;z-index:999;flex-direction:column;align-items:center;justify-content:center">
+<video id="qrScanVideo" autoplay playsinline muted style="width:100%;max-width:420px;border-radius:12px"></video>
+<canvas id="qrScanCanvas" style="display:none"></canvas>
+<p id="qrScanMsg" style="color:#fff;margin-top:14px;text-align:center;padding:0 16px">وجّه الكاميرا لرمز QR اللي طالع بالتلفزيون 📺</p>
+<button onclick="closeQrScan()" style="margin-top:14px;padding:10px 26px;border-radius:10px;border:0;background:#ff5a5a;color:#fff;font-weight:bold">إلغاء</button>
+</div>
+
+<div class="s" id="ph">
+<p id="phMsg">⏳ جاري الاتصال...</p>
+</div>
+
+<script>
+function showFatal(msg){
+ try{const old=document.getElementById('fatalErr');if(old)old.remove();
+  const d=document.createElement('div');d.id='fatalErr';d.style.cssText='position:fixed;inset:0;z-index:99999;background:#0b1d33;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center;font-family:system-ui,Tahoma,sans-serif';
+  d.innerHTML='<div style="font-size:40px">⚠️</div><div style="font-size:17px;max-width:320px">صار خطأ ومنع الصفحة من الفتح:<br><span style="opacity:.8;font-size:13px">'+String(msg).slice(0,200)+'</span></div><button style="background:#1e88e5;color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:16px" onclick="location.reload()">🔄 إعادة المحاولة</button>';
+  document.body.appendChild(d);}catch(_){}
+}
+function libsReady(){return typeof Peer!=='undefined'}
+function waitLibs(cb,tries){tries=tries||0;if(libsReady())return cb();if(tries>100)return showFatal('تعذر تحميل مكتبات الاتصال (الشبكة بطيئة أو محجوبة). تأكد من الاتصال بالإنترنت وأعد المحاولة.');setTimeout(()=>waitLibs(cb,tries+1),150)}
+const $=i=>document.getElementById(i);
+const PEER_CFG={config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}};
+function show(i){document.querySelectorAll('.s').forEach(e=>e.style.display='none');$(i).style.display=(i==='ph')?'flex':(i==='tv'?'block':'flex')}
+function requestFS(){
+ try{
+  const el=document.documentElement;
+  const fn=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
+  if(!fn)return;const r=fn.call(el);if(r&&r.catch)r.catch(()=>{});
+ }catch(e){}
+}
+function renderJoinQR(code){
+ try{if(typeof QRCode==='undefined'||!$('mk'))return;$('mk').innerHTML='';new QRCode($('mk'),{text:String(code),width:132,height:132,colorDark:'#000',colorLight:'#fff'})}catch(_){}
+}
+
+/* ===== نقل البيانات الكبيرة عبر WebRTC بدون أي حد أقصى (chunking + backpressure) ===== */
+/* حجم كل قطعة صغير بما يكفي ليمر بأمان عبر قناة البيانات في كل المتصفحات، وبدون حد على العدد الكلي للقطع
+   -> النتيجة: المحتوى ممكن يوصل 1,000,000 حرف أو أكثر بكل عادية، لأن العملية تتكرر لحد ما تخلص كل القطع مهما كان عددها */
+const WRG_CHUNK_SIZE=60000; // حجم آمن لكل قطعة (بالأحرف) يتفادى تجاوز حد رسائل WebRTC
+const WRG_MAX_BUFFERED=1000000; // أعلى حجم مسموح يتجمع بالمخزن المؤقت قبل ما نكمل الإرسال (ضغط خلفي)
+function wrgSendChunked(conn,payloadStr,onProgress,onDone){
+ const total=Math.max(1,Math.ceil(payloadStr.length/WRG_CHUNK_SIZE));
+ try{conn.send(JSON.stringify({_embB64Meta:1,total,size:payloadStr.length}))}catch(e){}
+ let i=0;
+ function sendNext(){
+  if(!conn||!conn.open){return}
+  if(i>=total){if(onDone)onDone();return}
+  // ضغط خلفي: ننتظر لو المخزن المؤقت ممتلئ عشان ما نفقد قطع بملفات ضخمة جدًا
+  if(conn.dataChannel && conn.dataChannel.bufferedAmount>WRG_MAX_BUFFERED){
+   setTimeout(sendNext,30);return;
+  }
+  try{conn.send(JSON.stringify({_embB64Chunk:1,i,data:payloadStr.slice(i*WRG_CHUNK_SIZE,(i+1)*WRG_CHUNK_SIZE)}))}catch(e){}
+  i++;
+  if(onProgress)onProgress(i,total);
+  setTimeout(sendNext,8);
+ }
+ sendNext();
+}
+function wrgReceiveChunked(state,msg,onProgress,onComplete){
+ if(msg._embB64Meta){state.total=msg.total;state.chunks=new Array(msg.total);state.got=0;if(onProgress)onProgress(0,msg.total);return true}
+ if(msg._embB64Chunk && state.chunks){
+  if(state.chunks[msg.i]==null)state.got++;
+  state.chunks[msg.i]=msg.data;
+  if(onProgress)onProgress(state.got,state.total);
+  if(state.got>=state.total){const full=state.chunks.join('');state.chunks=null;if(onComplete)onComplete(full)}
+  return true;
+ }
+ return false;
+}
+
+/* ===== إضافة ألعاب من تطبيق المكتبة (APK) ===== */
+let libPeer=null, libConn=null, agPendingGame=null;
+const DYN_GAMES={};
+const EMB_GAMES={};
+function isEmbGame(g){return !!EMB_GAMES[g]}
+function openAddGames(){
+  $('addGamesOverlay').style.display='flex';
+  $('agStep1').style.display='block'; $('agStep2').style.display='none'; $('agStep3').style.display='none'; $('agStep4').style.display='none';
+}
+function closeAddGames(){
+  $('addGamesOverlay').style.display='none';
+  if(libPeer){ try{libPeer.destroy()}catch(e){} }
+  libPeer=null; libConn=null; agPendingGame=null;
+}
+function agShowCode(){
+  $('agStep1').style.display='none'; $('agStep2').style.display='block';
+  const code6=String(100000+Math.floor(Math.random()*900000));
+  $('agCode').textContent=code6;
+  try{ if(typeof QRCode!=='undefined'){ $('agMk').innerHTML=''; new QRCode($('agMk'),{text:code6,width:120,height:120,colorDark:'#000',colorLight:'#fff'}); } }catch(_){}
+  if(libPeer){ try{libPeer.destroy()}catch(e){} }
+  libPeer=new Peer('wrglib'+code6,PEER_CFG);
+  libPeer.on('error',e=>{ if(e&&e.type==='unavailable-id'){ try{libPeer.destroy()}catch(_){} agShowCode(); } });
+  libPeer.on('connection',c=>{
+    libConn=c;
+    const rxState={};
+    c.on('data',d=>{
+      try{
+        const m=(typeof d==='string')?JSON.parse(d):d;
+        if(m.t==='meta'){ rxState.name=m.name; rxState.icon=m.icon; rxState.chunks=new Array(m.totalChunks); rxState.total=m.totalChunks; rxState.got=0; }
+        else if(m.t==='chunk'&&rxState.chunks){
+          if(rxState.chunks[m.i]==null)rxState.got++;
+          rxState.chunks[m.i]=m.data;
+          try{c.send(JSON.stringify({t:'ack',i:m.i}))}catch(_){}
+          if($('agProgress'))$('agProgress').textContent='📥 جاري الاستلام... '+Math.round(rxState.got/rxState.total*100)+'%';
+          if(rxState.got>=rxState.total) finishReceiveGame({name:rxState.name,icon:rxState.icon},rxState.chunks.join(''));
+        }
+      }catch(e){}
+    });
+  });
+}
+function finishReceiveGame(meta,b64){
+  const id='dyn_'+Date.now();
+  const tag=document.createElement('script'); tag.type='text/plain'; tag.id=id+'B64'; tag.textContent=b64;
+  document.body.appendChild(tag);
+  EMB_GAMES[id]=id+'B64';
+  DYN_GAMES[id]={name:meta.name||'لعبة جديدة',icon:meta.icon||'🎮'};
+  agPendingGame=id;
+  $('agGameIcon').textContent=DYN_GAMES[id].icon;
+  $('agGameName').textContent=DYN_GAMES[id].name;
+  $('agStep2').style.display='none'; $('agStep3').style.display='block';
+  addHubTile(id);
+}
+function agShowFinal(){ $('agStep3').style.display='none'; $('agStep4').style.display='block'; }
+function agPlayNow(){ const id=agPendingGame; closeAddGames(); if(id) hostGame(id); }
+function addHubTile(id){
+  if($('hubTile_'+id)) return;
+  const meta=DYN_GAMES[id];
+  const div=document.createElement('div');
+  div.className='gcard'; div.id='hubTile_'+id;
+  div.style.cssText="--gc:#9effa8;border-color:#9effa855;background:linear-gradient(165deg,#0a1a0eee,#05050af5);position:relative;z-index:1;width:clamp(150px,22vw,236px);min-width:150px;border-radius:20px;padding:20px 16px 16px;cursor:pointer;text-align:center;border:1px solid #3d7de055;box-shadow:0 14px 30px #00000066,inset 0 1px 0 #ffffff12";
+  div.onclick=()=>hostGame(id);
+  const ic=document.createElement('div'); ic.style.cssText="font-size:34px;width:64px;height:64px;line-height:64px;border-radius:18px;margin:0 auto 10px;background:radial-gradient(circle at 35% 30%,#ffffff14,#00000033)"; ic.textContent=meta.icon;
+  const b=document.createElement('b'); b.style.cssText="display:block;font-size:16px;margin-bottom:4px"; b.textContent=meta.name;
+  const p=document.createElement('p'); p.style.cssText="font-size:12.5px;opacity:.78;line-height:1.5"; p.textContent='لعبة مُضافة من مكتبة الألعاب';
+  div.appendChild(ic); div.appendChild(b); div.appendChild(p);
+  $('addGamesTile').insertAdjacentElement('beforebegin',div);
+}
+
+/* ===== مسح رمز QR من الجوال ===== */
+let qrScanStream=null, qrScanRAF=null;
+async function openQrScan(){
+  if(typeof jsQR==='undefined'){ $('jm').textContent='⚠️ تعذر تحميل ماسح الباركود (تأكد من الاتصال بالإنترنت)'; return; }
+  $('qrScanOverlay').style.display='flex'; $('qrScanMsg').textContent='وجّه الكاميرا لرمز QR اللي طالع بالتلفزيون 📺';
+  try{
+    qrScanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const v=$('qrScanVideo'); v.srcObject=qrScanStream; await v.play();
+    qrScanTick();
+  }catch(e){
+    $('qrScanMsg').textContent='⚠️ ما قدرنا نفتح الكاميرا - تأكد من صلاحية الكاميرا للمتصفح';
+  }
+}
+function qrScanTick(){
+  const v=$('qrScanVideo'), c=$('qrScanCanvas');
+  if(v&&v.readyState===v.HAVE_ENOUGH_DATA){
+    c.width=v.videoWidth; c.height=v.videoHeight;
+    const ctx=c.getContext('2d'); ctx.drawImage(v,0,0,c.width,c.height);
+    try{
+      const img=ctx.getImageData(0,0,c.width,c.height);
+      const res=jsQR(img.data,img.width,img.height);
+      if(res&&res.data){
+        const digits=(res.data.match(/\d{3,6}/)||[res.data])[0];
+        $('jc').value=digits; closeQrScan(); $('jm').textContent='تم قراءة الرمز ✅ اضغط دخول';
+        return;
+      }
+    }catch(_){}
+  }
+  qrScanRAF=requestAnimationFrame(qrScanTick);
+}
+function closeQrScan(){
+  if(qrScanRAF) cancelAnimationFrame(qrScanRAF); qrScanRAF=null;
+  if(qrScanStream){ qrScanStream.getTracks().forEach(t=>t.stop()); qrScanStream=null; }
+  $('qrScanOverlay').style.display='none';
+}
+
+/* ===== ألعاب مدمجة داخل آيفريم (تشتغل فوق نفس اتصال الغرفة) ===== */
+let embTv=null,embPh=null,embPhReady=false,embPhQueue=[];
+function embOpenTv(kind,roomCode){
+ try{if(embTv&&embTv.iframe)embTv.iframe.remove()}catch(e){}
+ const b64=$(EMB_GAMES[kind]).textContent.trim();
+ const ifr=document.createElement('iframe');
+ ifr.id='embTvFrame';
+ ifr.src='data:text/html;base64,'+b64;
+ ifr.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:9000;background:#0a1420';
+ document.body.appendChild(ifr);
+ const bk=document.createElement('button');
+ bk.textContent='✖ رجوع للقائمة';
+ bk.style.cssText='position:fixed;top:10px;left:10px;z-index:9001;background:#c9302088;color:#fff;border:1px solid #fff5;border-radius:10px;padding:8px 14px;font-family:inherit;font-weight:700;font-size:13px';
+ bk.onclick=()=>{embCloseTv();if(peer){try{peer.destroy()}catch(e){}}conns={};show('hub')};
+ document.body.appendChild(bk);
+ embTv={iframe:ifr,kind,backBtn:bk};
+ ifr.onload=()=>{try{ifr.contentWindow.postMessage({__emb:1,init:1,role:'tv',code:roomCode},'*')}catch(e){}};
+}
+function embOpenPh(kind){
+ try{
+  try{if(embPh&&embPh.iframe)embPh.iframe.remove()}catch(e){}
+  const tag=$(EMB_GAMES[kind]);
+  if(!tag){ if($('phMsg')) $('phMsg').textContent='⚠️ خطأ: محتوى اللعبة غير موجود محليًا'; return; }
+  const b64=tag.textContent.trim();
+  if(!b64){ if($('phMsg')) $('phMsg').textContent='⚠️ خطأ: محتوى اللعبة وصل فاضي'; return; }
+  if($('phMsg')) $('phMsg').textContent='⏳ جاري فتح اللعبة... ('+Math.round(b64.length/1024)+' كيلوبايت)';
+  const ifr=document.createElement('iframe');
+  ifr.id='embPhFrame';
+  ifr.src='data:text/html;base64,'+b64;
+  ifr.style.cssText='position:fixed;inset:0;width:100%;height:100%;border:0;z-index:9000;background:#0a1420';
+  document.body.appendChild(ifr);
+  embPh={iframe:ifr,kind};embPhReady=false;
+  let loaded=false;
+  ifr.onload=()=>{loaded=true;try{ifr.contentWindow.postMessage({__emb:1,init:1,role:'ph',code:rcode,name:myName},'*')}catch(e){}embPhReady=true;try{while(embPhQueue.length){ifr.contentWindow.postMessage({__emb:1,data:embPhQueue.shift()},'*')}}catch(e){}if($('phMsg'))$('phMsg').textContent='';};
+  ifr.onerror=()=>{ if($('phMsg')) $('phMsg').textContent='⚠️ خطأ بتحميل إطار اللعبة'; };
+  setTimeout(()=>{ if(!loaded && embPh && embPh.kind===kind){ if($('phMsg')) $('phMsg').textContent='⚠️ اللعبة ما فتحت خلال 6 ثواني'; } }, 6000);
+ }catch(err){
+  if($('phMsg')) $('phMsg').textContent='⚠️ خطأ أثناء فتح اللعبة: '+(err&&err.message?err.message:err);
+ }
+}
+function embCloseTv(){try{if(embTv){if(embTv.iframe)embTv.iframe.remove();if(embTv.backBtn)embTv.backBtn.remove()}}catch(e){}embTv=null}
+function embClosePh(){try{if(embPh&&embPh.iframe)embPh.iframe.remove()}catch(e){}embPh=null;embPhReady=false;embPhQueue=[]}
+window.addEventListener('message',e=>{
+ const m=e&&e.data; if(!m||!m.__emb||m.init) return;
+ if(role==='tv'){
+  if(m.to!=null){const c=conns[m.to];if(c&&c.open)c.send(JSON.stringify({_emb:1,d:m.data}))}
+ } else if(role==='ph'){
+  if(m.data!==undefined && conn && conn.open) conn.send(m.data);
+ }
+});
+
+/* ===== المضيف (التلفزيون): ممر اتصال بس بين الجوالات واللعبة المدمجة ===== */
+let GAME=null,peer,role,conn,conns={},myName='',rcode='';
+function hostGame(g){GAME=g;host()}
+function host(){
+ if(!libsReady()){waitLibs(host);return}
+ if(peer){try{peer.destroy()}catch(e){}}
+ conns={};embCloseTv();
+ role='tv';show('tv');
+ const code=String(1000+Math.floor(Math.random()*9000));
+ peer=new Peer('wrg'+code,PEER_CFG);
+ peer.on('error',e=>{if(e.type==='unavailable-id')host();else $('code').textContent='خطأ'});
+ peer.on('open',()=>{ $('code').textContent=code; renderJoinQR(code); });
+ peer.on('disconnected',()=>peer.reconnect());
+ if(isEmbGame(GAME))embOpenTv(GAME,code);
+ peer.on('connection',c=>{
+   conns[c.peer]=c;
+   let embB64Sent=false;
+   const annEmb=()=>{
+     try{c.send(JSON.stringify({_embGame:GAME}));}catch(e){}
+     if(DYN_GAMES[GAME] && !embB64Sent){
+       embB64Sent=true;
+       const tag=$(EMB_GAMES[GAME]);
+       if(tag) wrgSendChunked(c,tag.textContent);
+     }
+   };
+   c.on('open',annEmb);
+   c.on('data',d=>{try{annEmb();if(embTv&&embTv.iframe&&embTv.iframe.contentWindow)embTv.iframe.contentWindow.postMessage({__emb:1,event:'data',id:c.peer,data:d},'*')}catch(e){}});
+   c.on('close',()=>{delete conns[c.peer];try{if(embTv&&embTv.iframe&&embTv.iframe.contentWindow)embTv.iframe.contentWindow.postMessage({__emb:1,event:'disconnect',id:c.peer},'*')}catch(e){}});
+   c.on('error',()=>{delete conns[c.peer]})});
+}
+
+/* ===== الجوال: دخول الغرفة واستقبال اللعبة المدمجة ===== */
+let rc=0,entered=0;
+function doConnect(c,n,first){
+ try{conn=peer.connect('wrg'+c,{reliable:true});
+  let opened=0;
+  setTimeout(()=>{if(!opened&&!entered){$('jm').textContent='⏳ الاتصال بطيء، نحاول مجدداً...';try{conn.close()}catch(_){}doConnect(c,n,first)}},9000);
+  conn.on('open',()=>{opened=1;rc=0;$('phMsg').textContent='';$('jm').textContent='';
+   conn.send({t:'join',name:n});
+   if(first&&!entered){entered=1;try{show('ph');$('phMsg').textContent='⏳ جاري تحميل اللعبة...';
+    setTimeout(()=>{if(!embPh)$('phMsg').textContent='⚠️ تأخر الاتصال بالتلفزيون أكثر من اللازم - تأكد إن التلفزيون لسى فاتح نفس اللعبة وإن الرمز صحيح'},7000)
+   }catch(e){showFatal(e.message||e);return}}});
+  let pendingEmbGame=null;
+  const rxState={};
+  function tryOpenPendingEmb(kind){
+    if(!embPh||embPh.kind!==kind){try{show('ph')}catch(e){}embOpenPh(kind)}
+  }
+  conn.on('data',d=>{try{
+   const nd=JSON.parse(d);
+   const handled=wrgReceiveChunked(rxState,nd,
+     (got,total)=>{if($('phMsg'))$('phMsg').textContent='📥 جاري استلام اللعبة... '+Math.round(got/total*100)+'%'},
+     (full)=>{
+       if($('phMsg'))$('phMsg').textContent='📦 تم الاستلام، جاري التجهيز...';
+       if(pendingEmbGame && !EMB_GAMES[pendingEmbGame]){
+         const tagId=pendingEmbGame+'B64';
+         if(!document.getElementById(tagId)){ const tag=document.createElement('script'); tag.type='text/plain'; tag.id=tagId; tag.textContent=full; document.body.appendChild(tag); }
+         EMB_GAMES[pendingEmbGame]=tagId;
+       }
+       if(pendingEmbGame) tryOpenPendingEmb(pendingEmbGame);
+     });
+   if(handled)return;
+   if(nd._embGame){
+     pendingEmbGame=nd._embGame;
+     if(EMB_GAMES[nd._embGame]){ tryOpenPendingEmb(nd._embGame); }
+     else {
+       setTimeout(()=>{
+         if(pendingEmbGame===nd._embGame && !EMB_GAMES[nd._embGame] && $('phMsg')){
+           $('phMsg').textContent='⚠️ التلفزيون ما بعث محتوى اللعبة خلال 5 ثواني - جرب تطفي اللعبة من التلفزيون وتفتحها من جديد';
+         }
+       },5000);
+     }
+     return;
+   }
+   if(nd._emb){if(embPh&&embPhReady&&embPh.iframe&&embPh.iframe.contentWindow){try{embPh.iframe.contentWindow.postMessage({__emb:1,data:nd.d},'*')}catch(e){}}else{embPhQueue.push(nd.d);if(embPhQueue.length>300)embPhQueue.shift()}return}
+  }catch(e){}});
+  conn.on('close',()=>{if(rc<10){(entered?$('phMsg'):$('jm')).textContent='📶 انقطع الاتصال، إعادة المحاولة...';setTimeout(()=>{rc++;doConnect(c,n,first)},Math.min(6000,800*(rc+1)))}else (entered?$('phMsg'):$('jm')).textContent='⚠️ تعذر الاتصال. تأكد من الرمز وأعد فتح الصفحة.'});
+  conn.on('error',()=>{});
+ }catch(_){setTimeout(()=>doConnect(c,n,first),1500)}
+}
+function joinGame(){
+ const c=$('jc').value.trim(),n=$('jn').value.trim();
+ if(!c||!n){$('jm').textContent='اكتب الرمز والاسم';return}
+ if(!libsReady()){$('jm').textContent='جاري تحميل المكتبات...';waitLibs(joinGame);return}
+ requestFS();
+ $('jm').textContent='جاري الاتصال...';role='ph';myName=n;rcode=c;try{localStorage.jc=c;localStorage.jn=n}catch(_){}
+ peer=new Peer(PEER_CFG);
+ peer.on('error',e=>{$('jm').textContent='خطأ: '+e.type+' — أعد المحاولة';});
+ peer.on('open',()=>{
+  peer.on('disconnected',()=>peer.reconnect());
+  doConnect(c,n,1);
+ });
+}
+try{if(localStorage.jc){$('jc').value=localStorage.jc;$('jn').value=localStorage.jn||''}}catch(_){}
+</script>
+</body></html>
