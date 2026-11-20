@@ -1,0 +1,71 @@
+name: Repository Encryption
+
+on:
+  workflow_dispatch:
+
+jobs:
+  encrypt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Encrypt repository files
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const crypto = require('crypto');
+
+          const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{};:,.<>?";
+          const recoveryCode = Array.from(
+            { length: 500 },
+            () => alphabet[crypto.randomInt(alphabet.length)]
+          ).join("");
+
+          const key = crypto.createHash('sha256').update(recoveryCode).digest();
+          const root = process.cwd();
+
+          function encryptFile(file) {
+            const data = fs.readFileSync(file);
+            const iv = crypto.randomBytes(12);
+            const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+            const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
+            const tag = cipher.getAuthTag();
+
+            fs.writeFileSync(file, Buffer.concat([iv, tag, encrypted]));
+          }
+
+          function walk(dir) {
+            for (const item of fs.readdirSync(dir)) {
+              const full = path.join(dir, item);
+
+              if (full.includes('.git') || full.includes('.github/workflows')) continue;
+
+              if (fs.statSync(full).isDirectory()) {
+                walk(full);
+              } else {
+                encryptFile(full);
+              }
+            }
+          }
+
+          walk(root);
+
+          fs.writeFileSync(
+            path.join(root, 'RECOVERY_CODE.txt'),
+            recoveryCode,
+            { mode: 0o600 }
+          );
+
+          console.log("Encryption completed.");
+          console.log("Recovery code generated.");
+          EOF
+
+      - name: Upload encrypted files
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-repository
+          path: .
+          retention-days: 30
